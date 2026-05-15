@@ -1,17 +1,17 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_BUCKET',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID'
+  apiKey: 'AIzaSyBGcR2R7Lt9eSsE6ges0FvLLxG0-PH9nRE',
+  authDomain: 'lullyday-706e6.firebaseapp.com',
+  projectId: 'lullyday-706e6',
+  storageBucket: 'lullyday-706e6.firebasestorage.app',
+  messagingSenderId: '549745127354',
+  appId: '1:549745127354:web:3ca30be568fe9915aaf783',
 }
 
 const app = initializeApp(firebaseConfig)
 
-export const db = getFirestore(app)
 export const auth = getAuth(app)
+export const db = getFirestore(app)

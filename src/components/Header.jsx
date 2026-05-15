@@ -7,22 +7,23 @@ import {
 import { Link } from 'react-router-dom'
 
 import { CartContext } from '../context/CartContext'
-
 import { ThemeContext } from '../context/ThemeContext'
+import { AuthContext } from '../context/AuthContext'
 
 export default function Header() {
   const { cart } = useContext(CartContext)
-  
+  const { darkMode, toggleDarkMode } =
+    useContext(ThemeContext)
+  const { user, logout } = useContext(AuthContext)
+
   const totalQuantity = cart.reduce(
-  (acc, item) => acc + item.quantity,
-  0
+    (acc, item) => acc + item.quantity,
+    0
   )
 
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const { darkMode, toggleDarkMode } =
-  useContext(ThemeContext)
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
@@ -35,6 +36,18 @@ export default function Header() {
     }
   }, [])
 
+  const textColor = scrolled
+    ? darkMode
+      ? 'white'
+      : '#3d3126'
+    : 'white'
+
+  const headerBg = scrolled
+    ? darkMode
+      ? 'rgba(24,24,24,0.8)'
+      : 'rgba(255,255,255,0.75)'
+    : 'transparent'
+
   return (
     <>
       <header
@@ -46,12 +59,12 @@ export default function Header() {
           zIndex: 999,
           padding: scrolled ? '18px 40px' : '28px 40px',
           transition: '0.4s',
-          background: scrolled
-            ? 'rgba(255,255,255,0.75)'
-            : 'transparent',
+          background: headerBg,
           backdropFilter: scrolled ? 'blur(16px)' : 'none',
           borderBottom: scrolled
-            ? '1px solid rgba(0,0,0,0.05)'
+            ? darkMode
+              ? '1px solid rgba(255,255,255,0.08)'
+              : '1px solid rgba(0,0,0,0.05)'
             : 'none',
         }}
       >
@@ -64,12 +77,11 @@ export default function Header() {
             justifyContent: 'space-between',
           }}
         >
-          {/* LOGO */}
           <Link
             to="/"
             style={{
               textDecoration: 'none',
-              color: scrolled ? '#3d3126' : 'white',
+              color: textColor,
               fontSize: '28px',
               letterSpacing: '4px',
               fontWeight: '300',
@@ -78,7 +90,6 @@ export default function Header() {
             LULLYDAY
           </Link>
 
-          {/* DESKTOP MENU */}
           <nav
             className="desktop-menu"
             style={{
@@ -90,26 +101,41 @@ export default function Header() {
             <MenuLink
               to="/"
               label="Home"
-              color={scrolled ? '#3d3126' : 'white'}
-            />
-
-            <MenuLink
-              to="/login"
-              label="Login"
-              color={scrolled ? '#3d3126' : 'white'}
+              color={textColor}
             />
 
             <MenuLink
               to="/admin"
               label="Admin"
-              color={scrolled ? '#3d3126' : 'white'}
+              color={textColor}
             />
+
+            {user ? (
+              <button
+                onClick={logout}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  color: textColor,
+                  cursor: 'pointer',
+                  fontSize: '17px',
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <MenuLink
+                to="/login"
+                label="Login"
+                color={textColor}
+              />
+            )}
 
             <Link
               to="/cart"
               style={{
                 textDecoration: 'none',
-                color: scrolled ? '#3d3126' : 'white',
+                color: textColor,
                 position: 'relative',
                 fontSize: '17px',
               }}
@@ -120,9 +146,9 @@ export default function Header() {
                 style={{
                   position: 'absolute',
                   top: '-10px',
-                  right: '-16px',
-                  width: '22px',
-                  height: '22px',
+                  right: '-18px',
+                  width: '24px',
+                  height: '24px',
                   borderRadius: '50%',
                   background: '#8e735b',
                   color: 'white',
@@ -135,27 +161,38 @@ export default function Header() {
                 {totalQuantity}
               </span>
             </Link>
+
+            <button
+              onClick={toggleDarkMode}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                fontSize: '20px',
+                color: textColor,
+              }}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
           </nav>
 
-          {/* MOBILE BUTTON */}
           <button
-            onClick={toggleDarkMode}
+            onClick={() => setMenuOpen(!menuOpen)}
             style={{
+              display: 'none',
+              background: 'none',
               border: 'none',
-              background: 'transparent',
+              color: textColor,
+              fontSize: '28px',
               cursor: 'pointer',
-              fontSize: '20px',
-              color: scrolled
-                ? '#3d3126'
-                : 'white',
             }}
+            className="mobile-btn"
           >
-            {darkMode ? '☀️' : '🌙'}
+            ☰
           </button>
         </div>
       </header>
 
-      {/* MOBILE MENU */}
       {menuOpen && (
         <div
           style={{
@@ -164,7 +201,7 @@ export default function Header() {
             right: 0,
             width: '280px',
             height: '100vh',
-            background: 'white',
+            background: darkMode ? '#1f1f1f' : 'white',
             zIndex: 1000,
             padding: '120px 40px',
             boxShadow: '-10px 0 30px rgba(0,0,0,0.08)',
@@ -181,30 +218,66 @@ export default function Header() {
               to="/"
               label="Home"
               onClick={() => setMenuOpen(false)}
-            />
-
-            <MobileLink
-              to="/login"
-              label="Login"
-              onClick={() => setMenuOpen(false)}
+              darkMode={darkMode}
             />
 
             <MobileLink
               to="/admin"
               label="Admin"
               onClick={() => setMenuOpen(false)}
+              darkMode={darkMode}
             />
+
+            {user ? (
+              <button
+                onClick={() => {
+                  logout()
+                  setMenuOpen(false)
+                }}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  textAlign: 'left',
+                  color: darkMode ? 'white' : '#3d3126',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <MobileLink
+                to="/login"
+                label="Login"
+                onClick={() => setMenuOpen(false)}
+                darkMode={darkMode}
+              />
+            )}
 
             <MobileLink
               to="/cart"
               label={`Cart (${totalQuantity})`}
               onClick={() => setMenuOpen(false)}
+              darkMode={darkMode}
             />
+
+            <button
+              onClick={toggleDarkMode}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                textAlign: 'left',
+                color: darkMode ? 'white' : '#3d3126',
+                fontSize: '24px',
+                cursor: 'pointer',
+              }}
+            >
+              {darkMode ? 'Light Mode' : 'Dark Mode'}
+            </button>
           </div>
         </div>
       )}
 
-      {/* RESPONSIVE */}
       <style>
         {`
           @media (max-width: 768px) {
@@ -230,7 +303,6 @@ function MenuLink({ to, label, color }) {
         textDecoration: 'none',
         color,
         fontSize: '17px',
-        position: 'relative',
       }}
     >
       {label}
@@ -238,14 +310,19 @@ function MenuLink({ to, label, color }) {
   )
 }
 
-function MobileLink({ to, label, onClick }) {
+function MobileLink({
+  to,
+  label,
+  onClick,
+  darkMode,
+}) {
   return (
     <Link
       to={to}
       onClick={onClick}
       style={{
         textDecoration: 'none',
-        color: '#3d3126',
+        color: darkMode ? 'white' : '#3d3126',
         fontSize: '24px',
       }}
     >

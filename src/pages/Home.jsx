@@ -1,41 +1,55 @@
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from 'firebase/firestore'
+
+import { db } from '../firebase/firebase'
+
 import { CartContext } from '../context/CartContext'
+import { ThemeContext } from '../context/ThemeContext'
 
 import { motion } from 'framer-motion'
 
-import { ThemeContext } from '../context/ThemeContext'
-
-const products = [
-  {
-    id: 1,
-    title: 'Soft Baby Blanket',
-    price: 39000,
-    image:
-      'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?q=80&w=1200&auto=format&fit=crop',
-  },
-  {
-    id: 2,
-    title: 'Wood Toy Set',
-    price: 52000,
-    image:
-      'https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=1200&auto=format&fit=crop',
-  },
-  {
-    id: 3,
-    title: 'Natural Baby Knit',
-    price: 47000,
-    image:
-      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200&auto=format&fit=crop',
-  },
-]
-
 export default function Home() {
   const { addToCart } = useContext(CartContext)
-  const { darkMode } =
-  useContext(ThemeContext)
+  const { darkMode } = useContext(ThemeContext)
+
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const q = query(
+          collection(db, 'products'),
+          orderBy('createdAt', 'desc')
+        )
+
+        const querySnapshot = await getDocs(q)
+
+        const productList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+
+        setProducts(productList)
+      } catch (error) {
+        console.error('상품 불러오기 오류:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
 
   return (
     <>
@@ -118,9 +132,7 @@ export default function Home() {
         viewport={{ once: true }}
         style={{
           padding: '140px 20px',
-          background: darkMode
-            ? '#181818'
-            : '#f8f5f1',
+          background: darkMode ? '#181818' : '#f8f5f1',
           textAlign: 'center',
         }}
       >
@@ -139,9 +151,7 @@ export default function Home() {
             fontSize: '48px',
             fontWeight: '400',
             marginBottom: '30px',
-            color: darkMode
-              ? 'white'
-              : '#3d3126',
+            color: darkMode ? 'white' : '#3d3126',
           }}
         >
           작은 하루를 더 따뜻하게
@@ -152,7 +162,7 @@ export default function Home() {
             maxWidth: '720px',
             margin: '0 auto',
             lineHeight: 2,
-            color: '#6f6257',
+            color: darkMode ? '#d8cfc6' : '#6f6257',
             fontSize: '18px',
           }}
         >
@@ -169,7 +179,7 @@ export default function Home() {
       <section
         style={{
           padding: '140px 20px',
-          background: 'white',
+          background: darkMode ? '#111111' : 'white',
         }}
       >
         <div
@@ -192,101 +202,134 @@ export default function Home() {
             style={{
               fontSize: '48px',
               fontWeight: '400',
-              color: '#3d3126',
+              color: darkMode ? 'white' : '#3d3126',
             }}
           >
             Everyday Favorites
           </h2>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns:
-              'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '40px',
-            maxWidth: '1200px',
-            margin: '0 auto',
-          }}
-        >
-          {products.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: index * 0.2,
-              }}
-              viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              style={{
-                borderRadius: '28px',
-                overflow: 'hidden',
-                background: '#fff',
-                boxShadow:
-                  '0 10px 30px rgba(0,0,0,0.06)',
-              }}
-            >
-              <div
+        {loading ? (
+          <p
+            style={{
+              textAlign: 'center',
+              color: darkMode ? 'white' : '#3d3126',
+            }}
+          >
+            상품을 불러오는 중입니다...
+          </p>
+        ) : products.length === 0 ? (
+          <p
+            style={{
+              textAlign: 'center',
+              color: darkMode ? 'white' : '#3d3126',
+            }}
+          >
+            등록된 상품이 없습니다. Admin에서 상품을 등록해주세요.
+          </p>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns:
+                'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '40px',
+              maxWidth: '1200px',
+              margin: '0 auto',
+            }}
+          >
+            {products.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.8,
+                  delay: index * 0.15,
+                }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10 }}
                 style={{
+                  borderRadius: '28px',
                   overflow: 'hidden',
+                  background: darkMode ? '#1f1f1f' : '#fff',
+                  boxShadow: darkMode
+                    ? '0 10px 30px rgba(0,0,0,0.25)'
+                    : '0 10px 30px rgba(0,0,0,0.06)',
                 }}
               >
-                <motion.img
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.4 }}
-                  src={product.image}
-                  alt={product.title}
-                  style={{
-                    width: '100%',
-                    height: '420px',
-                    objectFit: 'cover',
-                  }}
-                />
-              </div>
+                <div style={{ overflow: 'hidden' }}>
+                  <Link
+                    to={`/product/${product.id}`}
+                    style={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
+                    <motion.img
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.4 }}
+                      src={product.image}
+                      alt={product.title}
+                      style={{
+                        width: '100%',
+                        height: '420px',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                  </Link>
+                </div>
 
-              <div style={{ padding: '32px' }}>
-                <h3
-                  style={{
-                    fontSize: '26px',
-                    marginBottom: '14px',
-                    color: '#3d3126',
-                  }}
-                >
-                  {product.title}
-                </h3>
+                <div style={{ padding: '32px' }}>
+                  <Link
+                    to={`/product/${product.id}`}
+                    style={{
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '26px',
+                        marginBottom: '14px',
+                        color: darkMode ? 'white' : '#3d3126',
+                      }}
+                    >
+                      {product.title}
+                    </h3>
+                  </Link>
 
-                <p
-                  style={{
-                    color: '#8e735b',
-                    marginBottom: '28px',
-                    fontSize: '18px',
-                  }}
-                >
-                  {product.price.toLocaleString()}원
-                </p>
+                  <p
+                    style={{
+                      color: '#8e735b',
+                      marginBottom: '28px',
+                      fontSize: '18px',
+                    }}
+                  >
+                    {Number(product.price).toLocaleString()}원
+                  </p>
 
-                <motion.button
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => addToCart(product)}
-                  style={{
-                    width: '100%',
-                    padding: '16px',
-                    border: 'none',
-                    background: '#8e735b',
-                    color: 'white',
-                    borderRadius: '14px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                  }}
-                >
-                  장바구니 담기
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => addToCart(product)}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      border: 'none',
+                      background: '#8e735b',
+                      color: 'white',
+                      borderRadius: '14px',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                    }}
+                  >
+                    장바구니 담기
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* MOOD GALLERY */}
@@ -297,7 +340,7 @@ export default function Home() {
         viewport={{ once: true }}
         style={{
           padding: '140px 20px',
-          background: '#f8f5f1',
+          background: darkMode ? '#181818' : '#f8f5f1',
         }}
       >
         <div
@@ -320,7 +363,7 @@ export default function Home() {
             style={{
               fontSize: '48px',
               fontWeight: '400',
-              color: '#3d3126',
+              color: darkMode ? 'white' : '#3d3126',
             }}
           >
             Everyday with warmth
@@ -347,6 +390,7 @@ export default function Home() {
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.4 }}
               src={img}
+              alt="LullyDay mood"
               style={{
                 width: '100%',
                 height: '340px',
