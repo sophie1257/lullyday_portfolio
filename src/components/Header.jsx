@@ -1,65 +1,250 @@
-import { useContext, useState } from 'react'
+import {
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+
 import { Link } from 'react-router-dom'
 
 import { CartContext } from '../context/CartContext'
 
+import { ThemeContext } from '../context/ThemeContext'
+
 export default function Header() {
   const { cart } = useContext(CartContext)
 
-  const [darkMode, setDarkMode] = useState(false)
-  const [search, setSearch] = useState('')
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { darkMode, toggleDarkMode } =
+  useContext(ThemeContext)
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
 
-  const toggleDarkMode = () => {
-    document.documentElement.classList.toggle('dark')
-    setDarkMode(!darkMode)
-  }
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#F6F1EB]/80 backdrop-blur-md dark:bg-black/80 dark:text-white">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
-        <Link to="/">
-          <h1 className="text-2xl tracking-[0.3em]">
-            LULLY DAY
-          </h1>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-8 text-sm tracking-widest">
-          <Link to="/">HOME</Link>
-
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="px-4 py-2 rounded-full bg-white dark:bg-neutral-800 outline-none"
-          />
-
-          <Link to="/login">
-            LOGIN
+    <>
+      <header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 999,
+          padding: scrolled ? '18px 40px' : '28px 40px',
+          transition: '0.4s',
+          background: scrolled
+            ? 'rgba(255,255,255,0.75)'
+            : 'transparent',
+          backdropFilter: scrolled ? 'blur(16px)' : 'none',
+          borderBottom: scrolled
+            ? '1px solid rgba(0,0,0,0.05)'
+            : 'none',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* LOGO */}
+          <Link
+            to="/"
+            style={{
+              textDecoration: 'none',
+              color: scrolled ? '#3d3126' : 'white',
+              fontSize: '28px',
+              letterSpacing: '4px',
+              fontWeight: '300',
+            }}
+          >
+            LULLYDAY
           </Link>
 
-          <Link to="/admin">
-            ADMIN
-          </Link>
+          {/* DESKTOP MENU */}
+          <nav
+            className="desktop-menu"
+            style={{
+              display: 'flex',
+              gap: '34px',
+              alignItems: 'center',
+            }}
+          >
+            <MenuLink
+              to="/"
+              label="Home"
+              color={scrolled ? '#3d3126' : 'white'}
+            />
 
-          <Link to="/cart" className="relative">
-            CART
+            <MenuLink
+              to="/login"
+              label="Login"
+              color={scrolled ? '#3d3126' : 'white'}
+            />
 
-            {cart.length > 0 && (
-              <span className="absolute -top-3 -right-4 bg-[#7A5C49] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+            <MenuLink
+              to="/admin"
+              label="Admin"
+              color={scrolled ? '#3d3126' : 'white'}
+            />
+
+            <Link
+              to="/cart"
+              style={{
+                textDecoration: 'none',
+                color: scrolled ? '#3d3126' : 'white',
+                position: 'relative',
+                fontSize: '17px',
+              }}
+            >
+              Cart
+
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '-10px',
+                  right: '-16px',
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '50%',
+                  background: '#8e735b',
+                  color: 'white',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 {cart.length}
               </span>
-            )}
-          </Link>
+            </Link>
+          </nav>
 
+          {/* MOBILE BUTTON */}
           <button
             onClick={toggleDarkMode}
-            className="bg-[#7A5C49] text-white px-4 py-2 rounded-full"
+            style={{
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              fontSize: '20px',
+              color: scrolled
+                ? '#3d3126'
+                : 'white',
+            }}
           >
-            {darkMode ? 'Light' : 'Dark'}
+            {darkMode ? '☀️' : '🌙'}
           </button>
-        </nav>
-      </div>
-    </header>
+        </div>
+      </header>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '280px',
+            height: '100vh',
+            background: 'white',
+            zIndex: 1000,
+            padding: '120px 40px',
+            boxShadow: '-10px 0 30px rgba(0,0,0,0.08)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '34px',
+            }}
+          >
+            <MobileLink
+              to="/"
+              label="Home"
+              onClick={() => setMenuOpen(false)}
+            />
+
+            <MobileLink
+              to="/login"
+              label="Login"
+              onClick={() => setMenuOpen(false)}
+            />
+
+            <MobileLink
+              to="/admin"
+              label="Admin"
+              onClick={() => setMenuOpen(false)}
+            />
+
+            <MobileLink
+              to="/cart"
+              label={`Cart (${cart.length})`}
+              onClick={() => setMenuOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* RESPONSIVE */}
+      <style>
+        {`
+          @media (max-width: 768px) {
+            .desktop-menu {
+              display: none !important;
+            }
+
+            .mobile-btn {
+              display: block !important;
+            }
+          }
+        `}
+      </style>
+    </>
+  )
+}
+
+function MenuLink({ to, label, color }) {
+  return (
+    <Link
+      to={to}
+      style={{
+        textDecoration: 'none',
+        color,
+        fontSize: '17px',
+        position: 'relative',
+      }}
+    >
+      {label}
+    </Link>
+  )
+}
+
+function MobileLink({ to, label, onClick }) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      style={{
+        textDecoration: 'none',
+        color: '#3d3126',
+        fontSize: '24px',
+      }}
+    >
+      {label}
+    </Link>
   )
 }

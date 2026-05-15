@@ -1,35 +1,32 @@
+import { useState } from 'react'
+
 export default function Admin() {
+  const [title, setTitle] = useState('')
+  const [price, setPrice] = useState('')
+
   return (
-    <main className="min-h-screen bg-[#F6F1EB] dark:bg-black dark:text-white px-6 py-32">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl mb-16">
-          ADMIN PAGE
-        </h1>
+    <div style={{ padding: '40px' }}>
+      <h1>관리자 페이지</h1>
 
-        <div className="bg-white dark:bg-neutral-900 rounded-[30px] p-10">
-          <input
-            type="text"
-            placeholder="Product Name"
-            className="w-full mb-4 px-4 py-4 rounded-xl border"
-          />
+      <input
+        type="text"
+        placeholder="상품명"
+        value={title}
+        onChange={(e) =>
+          setTitle(e.target.value)
+        }
+      />
 
-          <input
-            type="number"
-            placeholder="Price"
-            className="w-full mb-4 px-4 py-4 rounded-xl border"
-          />
+      <input
+        type="number"
+        placeholder="가격"
+        value={price}
+        onChange={(e) =>
+          setPrice(e.target.value)
+        }
+      />
 
-          <input
-            type="text"
-            placeholder="Image URL"
-            className="w-full mb-6 px-4 py-4 rounded-xl border"
-          />
-
-          <button className="bg-[#7A5C49] text-white px-8 py-4 rounded-full">
-            상품 등록
-          </button>
-        </div>
-      </div>
-    </main>
+      <button>상품 등록</button>
+    </div>
   )
 }

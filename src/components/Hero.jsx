@@ -1,19 +1,29 @@
-export default function Footer() {
+import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { CartContext } from '../context/CartContext'
+
+export default function Header() {
+  const { cart } = useContext(CartContext)
+
+  const totalCount = cart.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  )
+
   return (
-    <footer className="bg-[#E7DED4] py-20 mt-32">
-      <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl tracking-[0.3em] mb-6">
-          LULLY DAY
-        </h2>
+    <header className="header">
+      <Link to="/">
+        <h1>LullyDay</h1>
+      </Link>
 
-        <p className="text-[#666] mb-10">
-          Soft moments for little lives.
-        </p>
-
-        <p className="text-sm text-[#999]">
-          © 2026 LULLY DAY. All rights reserved.
-        </p>
-      </div>
-    </footer>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/cart">
+          Cart ({totalCount})
+        </Link>
+        <Link to="/login">Login</Link>
+        <Link to="/admin">Admin</Link>
+      </nav>
+    </header>
   )
 }
