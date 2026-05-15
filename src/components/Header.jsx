@@ -12,6 +12,11 @@ import { ThemeContext } from '../context/ThemeContext'
 
 export default function Header() {
   const { cart } = useContext(CartContext)
+  
+  const totalQuantity = cart.reduce(
+  (acc, item) => acc + item.quantity,
+  0
+  )
 
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -127,7 +132,7 @@ export default function Header() {
                   justifyContent: 'center',
                 }}
               >
-                {cart.length}
+                {totalQuantity}
               </span>
             </Link>
           </nav>
@@ -192,7 +197,7 @@ export default function Header() {
 
             <MobileLink
               to="/cart"
-              label={`Cart (${cart.length})`}
+              label={`Cart (${totalQuantity})`}
               onClick={() => setMenuOpen(false)}
             />
           </div>
