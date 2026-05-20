@@ -77,14 +77,17 @@ export default function Header() {
             justifyContent: 'space-between',
           }}
         >
+          {/* 로고 클릭 시 메인 페이지로 이동 */}
           <Link
             to="/"
+            onClick={() => setMenuOpen(false)}
             style={{
               textDecoration: 'none',
               color: textColor,
               fontSize: '28px',
               letterSpacing: '4px',
               fontWeight: '300',
+              cursor: 'pointer',
             }}
           >
             LULLYDAY
@@ -101,6 +104,12 @@ export default function Header() {
             <MenuLink
               to="/"
               label="Home"
+              color={textColor}
+            />
+
+            <MenuLink
+              to="/promotion"
+              label="Promotion"
               color={textColor}
             />
 
@@ -222,6 +231,13 @@ export default function Header() {
             />
 
             <MobileLink
+              to="/promotion"
+              label="Promotion"
+              onClick={() => setMenuOpen(false)}
+              darkMode={darkMode}
+            />
+
+            <MobileLink
               to="/admin"
               label="Admin"
               onClick={() => setMenuOpen(false)}
@@ -262,7 +278,10 @@ export default function Header() {
             />
 
             <button
-              onClick={toggleDarkMode}
+              onClick={() => {
+                toggleDarkMode()
+                setMenuOpen(false)
+              }}
               style={{
                 border: 'none',
                 background: 'transparent',
