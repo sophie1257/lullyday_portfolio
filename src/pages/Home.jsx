@@ -124,6 +124,220 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* PROMOTION */}
+      <motion.section
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+        style={{
+          padding: '120px 20px',
+          background: darkMode ? '#111111' : '#f8f1e9',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '60px',
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <p
+              style={{
+                color: '#8e735b',
+                letterSpacing: '4px',
+                marginBottom: '20px',
+                fontWeight: 600,
+              }}
+            >
+              PROMOTION
+            </p>
+
+            <h2
+              style={{
+                fontSize: '48px',
+                fontWeight: '400',
+                lineHeight: 1.25,
+                marginBottom: '24px',
+                color: darkMode ? 'white' : '#3d3126',
+              }}
+            >
+              아이와 반려동물이 함께하는
+              <br />
+              따뜻한 일상 기획전
+            </h2>
+
+            <p
+              style={{
+                fontSize: '18px',
+                lineHeight: 1.9,
+                color: darkMode ? '#d8cfc6' : '#6f6257',
+                marginBottom: '36px',
+                maxWidth: '560px',
+              }}
+            >
+              LullyDay가 준비한 시즌 프로모션으로 포근한 육아용품과
+              감성적인 반려동물 아이템을 만나보세요. 브랜드 무드와
+              쇼핑몰 사용자 흐름을 고려해 구성한 기획전 페이지입니다.
+            </p>
+
+            <Link
+              to="/promotion"
+              style={{
+                display: 'inline-block',
+                padding: '16px 30px',
+                background: '#8e735b',
+                color: 'white',
+                borderRadius: '999px',
+                textDecoration: 'none',
+                fontSize: '16px',
+                fontWeight: 600,
+              }}
+            >
+              기획전 보러가기
+            </Link>
+          </div>
+
+          <motion.div
+            whileHover={{ y: -8 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              minHeight: '420px',
+              borderRadius: '34px',
+              backgroundImage:
+                'linear-gradient(rgba(80, 55, 35, 0.25), rgba(80, 55, 35, 0.25)), url(https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?q=80&w=1200&auto=format&fit=crop)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: darkMode
+                ? '0 20px 50px rgba(0,0,0,0.3)'
+                : '0 20px 50px rgba(80,55,35,0.12)',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                left: '30px',
+                bottom: '30px',
+                right: '30px',
+                background: 'rgba(255,255,255,0.9)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '26px',
+                padding: '28px',
+              }}
+            >
+              <p
+                style={{
+                  color: '#8e735b',
+                  letterSpacing: '3px',
+                  fontSize: '13px',
+                  marginBottom: '12px',
+                  fontWeight: 700,
+                }}
+              >
+                NEW SEASON
+              </p>
+
+              <h3
+                style={{
+                  fontSize: '30px',
+                  fontWeight: '400',
+                  color: '#3d3126',
+                  marginBottom: '12px',
+                }}
+              >
+                Warm Daily Collection
+              </h3>
+
+              <p
+                style={{
+                  color: '#6f6257',
+                  lineHeight: 1.7,
+                }}
+              >
+                Baby Care · Pet Daily · Family Lifestyle
+              </p>
+            </div>
+          </motion.div>
+        </div>
+
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '60px auto 0',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '24px',
+          }}
+        >
+          {[
+            {
+              number: '01',
+              title: 'Baby Care Week',
+              desc: '부드러운 아기용품을 특별한 혜택으로 만나보세요.',
+            },
+            {
+              number: '02',
+              title: 'Pet Daily Items',
+              desc: '반려동물과의 일상을 위한 감성 아이템 기획전.',
+            },
+            {
+              number: '03',
+              title: 'Family Lifestyle',
+              desc: '아이와 반려동물이 함께하는 따뜻한 공간 제안.',
+            },
+          ].map((item) => (
+            <motion.div
+              key={item.number}
+              whileHover={{ y: -8 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                background: darkMode ? '#1f1f1f' : '#fff',
+                padding: '34px',
+                borderRadius: '28px',
+                boxShadow: darkMode
+                  ? '0 12px 30px rgba(0,0,0,0.25)'
+                  : '0 12px 30px rgba(80,55,35,0.08)',
+              }}
+            >
+              <p
+                style={{
+                  color: '#8e735b',
+                  fontWeight: 700,
+                  marginBottom: '16px',
+                }}
+              >
+                {item.number}
+              </p>
+
+              <h3
+                style={{
+                  fontSize: '24px',
+                  marginBottom: '14px',
+                  color: darkMode ? 'white' : '#3d3126',
+                }}
+              >
+                {item.title}
+              </h3>
+
+              <p
+                style={{
+                  color: darkMode ? '#d8cfc6' : '#6f6257',
+                  lineHeight: 1.7,
+                }}
+              >
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
       {/* BRAND STORY */}
       <motion.section
         initial={{ opacity: 0, y: 80 }}
