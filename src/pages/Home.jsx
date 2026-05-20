@@ -24,6 +24,7 @@ export default function Home() {
 
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showPopup, setShowPopup] = useState(true)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -54,6 +55,154 @@ export default function Home() {
   return (
     <>
       <Header />
+
+      {showPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.35)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45 }}
+            style={{
+              width: '100%',
+              maxWidth: '460px',
+              background: darkMode ? '#1f1f1f' : '#fffaf4',
+              borderRadius: '30px',
+              overflow: 'hidden',
+              boxShadow: '0 24px 70px rgba(0,0,0,0.25)',
+              position: 'relative',
+            }}
+          >
+            <button
+              onClick={() => setShowPopup(false)}
+              style={{
+                position: 'absolute',
+                top: '18px',
+                right: '18px',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                border: 'none',
+                background: 'rgba(255,255,255,0.85)',
+                color: '#5f4632',
+                fontSize: '20px',
+                cursor: 'pointer',
+                zIndex: 2,
+              }}
+            >
+              ×
+            </button>
+
+            <div
+              style={{
+                height: '230px',
+                backgroundImage:
+                  'linear-gradient(rgba(80,55,35,0.15), rgba(80,55,35,0.15)), url(https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1200&auto=format&fit=crop)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+
+            <div
+              style={{
+                padding: '34px 30px 32px',
+                textAlign: 'center',
+              }}
+            >
+              <p
+                style={{
+                  color: '#8e735b',
+                  letterSpacing: '3px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  marginBottom: '14px',
+                }}
+              >
+                SPECIAL EVENT
+              </p>
+
+              <h2
+                style={{
+                  fontSize: '30px',
+                  fontWeight: 400,
+                  lineHeight: 1.35,
+                  color: darkMode ? 'white' : '#3d3126',
+                  marginBottom: '16px',
+                }}
+              >
+                펫 용품과 함께 구매 시
+                <br />
+                사은품 증정
+              </h2>
+
+              <p
+                style={{
+                  color: darkMode ? '#d8cfc6' : '#6f6257',
+                  lineHeight: 1.8,
+                  fontSize: '16px',
+                  marginBottom: '28px',
+                }}
+              >
+                Baby Care 상품과 Pet Daily 상품을 함께 구매하면
+                LullyDay가 준비한 감성 사은품을 드려요.
+              </p>
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <Link
+                  to="/promotion"
+                  onClick={() => setShowPopup(false)}
+                  style={{
+                    display: 'inline-block',
+                    padding: '14px 24px',
+                    background: '#8e735b',
+                    color: 'white',
+                    borderRadius: '999px',
+                    textDecoration: 'none',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                  }}
+                >
+                  이벤트 보러가기
+                </Link>
+
+                <button
+                  onClick={() => setShowPopup(false)}
+                  style={{
+                    padding: '14px 24px',
+                    background: darkMode ? '#2d2d2d' : '#efe7dd',
+                    color: darkMode ? 'white' : '#5f4632',
+                    border: 'none',
+                    borderRadius: '999px',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+      
 
       {/* HERO */}
       <section
